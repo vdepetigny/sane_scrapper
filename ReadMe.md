@@ -1,7 +1,7 @@
 
 Hello à toi Correcteur !
 
-Avant de commencer, sachant que depuis le début de THP, nous glandons un peu moins que d'habitude, nous te proposons de regarder cette petite vidéo pour étoffer ta culture générale (et relativiser sur tes heures de sommeil ;)): https://www.youtube.com/watch?v=dAMXH2_dcvs 
+Avant de commencer, sachant que depuis le début de THP, nous glandons un peu moins que d'habitude, nous te proposons de regarder cette petite vidéo pour étoffer ta culture générale (et relativiser sur tes heures de sommeil): https://www.youtube.com/watch?v=dAMXH2_dcvs 
 
 Parlons peu, parlons bien, dans la catégorie des meilleurs peer-programmeurs, j'appelle : 
 
