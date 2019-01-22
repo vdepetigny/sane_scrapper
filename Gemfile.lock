@@ -96,9 +96,13 @@ DEPENDENCIES
   csv
   dotenv
   google_drive
+  nokogiri (>= 1.6.7.rc)
   pry
   rspec
   rubocop
+
+RUBY VERSION
+   ruby 2.5.1p57
 
 BUNDLED WITH
    2.0.1

@@ -1,2 +1,9 @@
-require 'csv'
-puts CSV.parse("1,chocolate\n2,bacon\n3,apple")
+require 'bundler'
+Bundler.require
+
+$:.unshift File.expand_path("./../lib", __FILE__)
+require 'app/scrapper'
+
+
+Val_Oise = Scrapper.new("http://annuaire-des-mairies.com/val-d-oise.html").perform
+
