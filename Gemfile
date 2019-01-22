@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+gem 'rspec'
+gem 'dotenv'
+gem 'pry'
+gem 'rubocop'
+gem 'google_drive'
+gem 'csv'
