@@ -1,30 +1,27 @@
-# require 'rubygems'
-# require 'nokogiri'
-# require 'open-uri'
-#require 'json'
 
 class Scrapper
 	attr_accessor :url_dept, :urls_town, :email_town
+#/ On intègre trois éléments en tant que variables d'instance.
 
+#1 Première étape : Initialisation - exécution de code à la création des instances
 	def initialize(url_dept)
 		@url_dept = url_dept
 		@urls_town = []
 		@email_town = {}
 	end 
 
-	#1 Première méthode : Collecte de l'email d'une mairie d'une ville du Val d'Oise
+#2 Deuxième étape : Scrapping
+#/ 2a - Collecte de l'email d'une mairie d'une ville du Val d'Oise
 	def get_townhall_email(townhall_url)
 		page = Nokogiri::HTML(open(townhall_url)) #/ on indique un site URL neutre qui sera indiqué dans la prochaine méthode
 
 		email = page.xpath('//*[contains(text(), "@")]').text
 		town = page.xpath('//*[contains(text(), "Adresse mairie de")]').text.split #/ on divise la string pour pouvoir récupérer uniquement le nom de la ville
-
-		#@email_town << {town[3] => email} #/ on indique la position du nom de la ville dans la string pour la récupérer
-		@email_town[town[3]] = email #/ on indique la position du nom de la ville dans la string pour la récupérer
+		@email_town[town[3]] = email #/ on intègre sous forme de hash les emails à la classe @email_town
 		@email_town
 	end
 
-	#2 Deuxième méthode : Collecte de toutes les URLs des villes du Val d'Oise
+#/ 2b - Collecte de toutes les URLs des villes du Val d'Oise
 	def get_townhall_urls
 		page = Nokogiri::HTML(open(@url_dept))
 		
@@ -37,24 +34,43 @@ class Scrapper
 		return @urls_town
 	end
 
+#3 Troisième étape : Sauvegarde des données
+#/ 3a - via JSON
 	def save_as_JSON
-
-			File.open("db/emails.json","w") do |email|
-  				@email_town.each do |mail|
-  					email.write(mail.to_json + "\n" )
-  				end
-			end	
+	  File.open("db/emails.json","w") do |mail|
+  		mail.puts(JSON.pretty_generate(@email_town)) #/ pour afficher les mails verticalement, utilisation de la fonction "pretty_generate"
+  	  end	
 	end
 
-	def save_as_Google_sheet
+#/ 3b - via Spreadsheet
+	def save_as_spreadsheet
+		session = GoogleDrive::Session.from_config("config.json")
+		ws = session.spreadsheet_by_key("1UAtn3oB21_a_gUM5TL8OK6Ud7zp6Z7z6c8tGYV6J4HA").worksheets[0]
 
-			File.open("db/emails.json","w") do |email|
-  				@email_town.each do |mail|
-  					email.write(mail.to_json + "\n" )
-  				end
-			end	
+		i = 2
+		ws[1,1]= "Ville"
+		ws[1,2] = "Contact"
+		@email_town.each_pair  do |key, value| #/ on aurait pû utiliser each mais each_pair est plus conseillé lorsqu'il y a deux éléments 
+			ws[i,1] = key
+			ws[i,2] = value
+			i += 1
+		end
+		ws.save 
+		ws.reload
 	end
-	
+
+#/ 3c - via CSV
+	def save_as_csv
+		CSV.open("db/emails.csv", "w") do |csv|
+			csv << ["Ville", "Contact"]
+			@email_town.each_pair  do |key, value|
+			csv << [key, value]
+		end
+		end
+	end
+
+
+#4 Quatrième étape : Exécution du code - TADAAAM
 	def perform
 		get_townhall_urls
 
@@ -63,6 +79,8 @@ class Scrapper
 		end
 
 		save_as_JSON
+		save_as_spreadsheet
+		save_as_csv
 	end
 end
 
